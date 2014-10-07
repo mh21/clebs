@@ -418,6 +418,11 @@ unix:QMAKE_LFLAGS *=-Wl,-rpath-link=$$DESTDIR
 # For includes from .ui files on MinGW
 INCLUDEPATH *= .
 DEPENDPATH *= .
+# If there are headers and sources, use them by default
+headers = $$files("$${_PRO_FILE_PWD_}/*.h")
+sources = $$files("$${_PRO_FILE_PWD_}/*.cpp") $$files("$${_PRO_FILE_PWD_}/*.c")
+HEADERS *= $$replace(headers, "(^| )$${_PRO_FILE_PWD_}/", "\\1")
+SOURCES *= $$replace(sources, "(^| )$${_PRO_FILE_PWD_}/", "\\1")
 # Help a bit with dependencies between internal libraries
 libdirs = $$files("$${BASEDIR}/*")
 for(libdir, libdirs):exists("$${libdir}/lib") {
