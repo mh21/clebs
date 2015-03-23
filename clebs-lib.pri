@@ -439,7 +439,7 @@ win32-g++|win32-x-g++*:QMAKE_CLEAN *= object_script.*
 
 unix {
     CONFIG += link_pkgconfig
-
+    QMAKE_CXXFLAGS *= -std=c++11
     #QMAKE_CXXFLAGS_DEBUG *= -O2
 
     # Code coverage tests with gcov
