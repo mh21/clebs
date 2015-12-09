@@ -437,6 +437,8 @@ INSTALLS *= target
 # mingw creates scripts if there are too many source files
 win32-g++|win32-x-g++*:QMAKE_CLEAN *= object_script.*
 
+CONFIG(debug, debug|release):DEFINES += CLEBS_DEBUG
+
 unix {
     CONFIG += link_pkgconfig
     QMAKE_CXXFLAGS *= -std=c++11
@@ -462,6 +464,9 @@ win32 {
     !win32-g++: QMAKE_CXXFLAGS += /Zi
     !win32-g++: QMAKE_LFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
 }
+
+# use a project config file if something of the above needs to be changed
+exists("$${BASEDIR}/projectconfig.pri"):include("$${BASEDIR}/projectconfig.pri")
 
 # Fixup subdir compile order and dependencies. check dependencies  =============
 
