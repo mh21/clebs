@@ -25,14 +25,34 @@ clebsDependency(pdflatex) {
         TEMPBUILDROOT = /tmp
     }
 
-    TEMPBUILDLATEX = $$TEMPBUILDROOT/latex-build$$replace(DESTDIR, [/\\\\], -)
+    TEMPBUILDLATEX = $${TEMPBUILDROOT}/latex-build$$replace(DESTDIR, [/\\\\:], -)/
+    win32:TEMPBUILDLATEX = $$replace(TEMPBUILDLATEX, /, \\\\)
     LATEXOPTIONS = -interaction=nonstopmode -output-directory=$$TEMPBUILDLATEX
     BIBTEXCMD = BIBINPUTS=$$TEMPBUILDLATEX: openout_any=a bibtex
 
     pdflatex.input = PDFLATEX_SOURCES
     pdflatex.output = ${QMAKE_FILE_BASE}.pdf
-    pdflatex.commands = $(MKDIR) $$TEMPBUILDLATEX && pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} && $$BIBTEXCMD $$TEMPBUILDLATEX/${QMAKE_FILE_BASE}.aux && pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} && pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} && $(COPY_FILE) $$TEMPBUILDLATEX/${QMAKE_FILE_BASE}.pdf ${QMAKE_FILE_OUT}
+    win32 {
+        pdflatex.commands = ( if not exist $${TEMPBUILDLATEX} mkdir $$TEMPBUILDLATEX ) &
+        pdflatex.commands += del /q $${TEMPBUILDLATEX}* &
+        pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} &
+        pdflatex.commands += bibtex $${TEMPBUILDLATEX}${QMAKE_FILE_BASE}.aux &
+        pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} &
+        pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} &
+        pdflatex.commands += $(COPY_FILE) $${TEMPBUILDLATEX}${QMAKE_FILE_BASE}.pdf ${QMAKE_FILE_OUT}
+    }
+    unix {
+        pdflatex.commands = test -d $${TEMPBUILDLATEX} || mkdir -p $$TEMPBUILDLATEX ;
+        pdflatex.commands += rm $${TEMPBUILDLATEX}* ;
+
+        pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} ;
+        pdflatex.commands += bibtex $${TEMPBUILDLATEX}${QMAKE_FILE_BASE}.aux ;
+        pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} ;
+        pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} ;
+        pdflatex.commands += $(COPY_FILE) $${TEMPBUILDLATEX}${QMAKE_FILE_BASE}.pdf ${QMAKE_FILE_OUT}
+    }
     pdflatex.variable_out = GENERATED_FILES
     pdflatex.CONFIG *= target_predeps
     QMAKE_EXTRA_COMPILERS += pdflatex
-}
+
+    }
