@@ -305,6 +305,7 @@ defineTest(clebsAddTestTarget) {
             pro = $$basename(testdir)
             shorttestdir = "$${shortalldir}/tests/$${pro}"
             !exists("$${BASEDIR}/$${shorttestdir}/$${pro}.pro"):next()
+            contains(CLEBS_DISABLED, $${shorttestdir}):next()
             target = $$clebsTarget($$shorttestdir)
             eval(test_$${target}.commands = @echo [tests] Entering dir "\\\\\\'$${shorttestdir}\\\\\\'" && $${xvfb} $${DESTDIR}/$${target} | $${DESTDIR}/testcolorizer)
             eval(testxml_$${target}.commands = $${xvfb} $${DESTDIR}/$${target} -xunitxml > $${target}-results.xml)
