@@ -89,10 +89,22 @@ defineReplace(clebsMissingDependencies) {
     for(dep, 1) {
         contains(dep, "^[-].*"):next()
         dep ~= s|^[-+]||
+        contains(CLEBS_AVAILABLEDEPS, $$dep):next()
+        contains(CLEBS_MISSINGDEPS, $$dep) {
+            missing *= $$dep
+            next()
+        }
         CLEBS = $$dep
         file = $$clebsDependencyFile($$dep)
         !isEmpty(file):include($$file)
-        !contains(CLEBS_DEPENDENCIES, $$dep):missing *= $$dep
+        !contains(CLEBS_DEPENDENCIES, $$dep) {
+            CLEBS_MISSINGDEPS *= $$dep
+            export(CLEBS_MISSINGDEPS)
+            missing *= $$dep
+        } else {
+            CLEBS_AVAILABLEDEPS *= $$dep
+            export(CLEBS_AVAILABLEDEPS)
+        }
     }
     return($$missing)
 }
