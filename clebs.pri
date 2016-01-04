@@ -38,14 +38,14 @@ defineTest(clebsFixupSubdirs) {
         deps = $$fromfile("$${fullsubdir}/$${pro}.pro", "CLEBS")
         libs = $$clebsInternalLibDependencies($$deps)
         external = $$clebsExternalDependencies($$deps)
-        missingexternal = $$clebsMissingDependencies($$external)
+        missing = $$clebsMissingDependencies($$external $$libs)
         CLEBS_EXTERNALDEPS *= $$external
         contains(CLEBS_DISABLED, $$subdir) {
             CLEBS_SUBDIRS += "$${subdir}_"
             next()
         }
-        !isEmpty(missingexternal) {
-            CLEBS_SUBDIRS += "$${subdir}+$${missingexternal}-"
+        !isEmpty(missing) {
+            CLEBS_SUBDIRS += "$${subdir}+$${missing}-"
             next()
         }
         CLEBS_SUBDIRS += "$${subdir}"
@@ -82,25 +82,34 @@ defineReplace(clebsDependencyFile) {
     return("")
 }
 
-# Tries to temporarily include the specified dependency include files and
+# Recursively tries to figure out which dependencies are available
 # returns the missing ones (without +-)
 defineReplace(clebsMissingDependencies) {
     clear(missing)
     for(dep, 1) {
         contains(dep, "^[-].*"):next()
         dep ~= s|^[-+]||
+        dep ~= s|.*/||
         contains(CLEBS_AVAILABLEDEPS, $$dep):next()
         contains(CLEBS_MISSINGDEPS, $$dep) {
             missing *= $$dep
             next()
         }
-        CLEBS = $$dep
-        file = $$clebsDependencyFile($$dep)
-        !isEmpty(file):include($$file)
-        !contains(CLEBS_DEPENDENCIES, $$dep) {
+        lib = $$clebsInternalLibDependencies($$dep)
+        external = $$clebsExternalDependencies($$dep)
+        !isEmpty(external) {
+            CLEBS = $$dep
+            file = $$clebsDependencyFile($$dep)
+            !isEmpty(file):include($$file)
+            !contains(CLEBS_DEPENDENCIES, $$dep):missing *= $$dep
+        } else:!isEmpty(lib) {
+            libdeps = $$fromfile("$${BASEDIR}/$${lib}/$${dep}.pro", "CLEBS")
+            libdepsmissing *= $$clebsMissingDependencies($$libdeps)
+            !isEmpty(libdepsmissing):missing *= $$dep
+        }
+        contains(missing, $$dep) {
             CLEBS_MISSINGDEPS *= $$dep
             export(CLEBS_MISSINGDEPS)
-            missing *= $$dep
         } else {
             CLEBS_AVAILABLEDEPS *= $$dep
             export(CLEBS_AVAILABLEDEPS)
