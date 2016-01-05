@@ -28,6 +28,17 @@
 defineTest(clebsFixupSubdirs) {
     clear(CLEBS_SUBDIRS)
     clear(CLEBS_EXTERNALDEPS)
+    for(tree, CLEBS_TREES) {
+        subdirs = $$files("$${BASEDIR}/$${tree}/*")
+        for(subdir, subdirs) {
+            shortsubdir = $$basename(subdir)
+            subsubdirs = $$files("$${BASEDIR}/$${tree}/$${shortsubdir}/*")
+            for(subsubdir, subsubdirs) {
+                shortsubsubdir = $$basename(subsubdir)
+                SUBDIRS *= "$${tree}/$${shortsubdir}/$${shortsubsubdir}"
+            }
+        }
+    }
     for(subdir, SUBDIRS) {
         SUBDIRS -= $$subdir
         subdir ~= s|/$||
@@ -136,10 +147,9 @@ defineReplace(clebsInternalLibDependencies) {
     for(dep, 1) {
         dep ~= s|^[-+]||
         contains(CLEBS_NOLIBDEPS, $$dep):next()
-        libdirs = $$files("$${BASEDIR}/*")
         clear(found)
-        for(libdir, libdirs) {
-            exists("$${libdir}/lib/$${dep}") {
+        for(libdir, CLEBS_TREES) {
+            exists("$${BASEDIR}/$${libdir}/lib/$${dep}") {
                 shortlib = $$basename(libdir)
                 libs *= "$${shortlib}/lib/$${dep}"
                 found = 1
@@ -328,10 +338,9 @@ defineTest(clebsPrintSubdir) {
 defineTest(clebsAddTestTarget) {
     unix:xvfb = "xvfb-run -a"
     test.commands = @echo testing...;
-    alldirs = $$files("$${BASEDIR}/*")
-    for(alldir, alldirs) {
+    for(alldir, CLEBS_TREES) {
         shortalldir = $$basename(alldir)
-        testdirs = $$files("$${alldir}/tests/*")
+        testdirs = $$files("$${BASEDIR}/$${alldir}/tests/*")
         for(testdir, testdirs) {
             pro = $$basename(testdir)
             shorttestdir = "$${shortalldir}/tests/$${pro}"
@@ -362,25 +371,34 @@ defineTest(clebsAddTestTarget) {
 
 # General settings =============================================================
 
-# base dir as needed by the .pri files and localconfig.pri
+# Base dir as needed by the .pri files and localconfig.pri
 BASEDIR = $$dirname(PWD)
 
-# Calculate the relative path to the .pro file, relative base dir
+# Current pro files
 profile = $$_PRO_FILE_ # do not remove, _PRO_FILE_ needs to be copied on QT4
+mainprofiles = $$files($$BASEDIR/*.pro)
+mainprofile = $$first(mainprofiles)
+mainprofile = $$basename(mainprofile)
+equals(profile, "$${BASEDIR}/$${mainprofile}"):CLEBS_MAINPROFILE = 1
+
+# Calculate the package name
+PACKAGE = $$section(mainprofile, '.', 0, 0)
+
+# Get trees from main pro file
+isEmpty(CLEBS_MAINPROFILE) {
+    CLEBS_TREES = $$fromfile("$${BASEDIR}/$${mainprofile}", "CLEBS_TREES")
+}
+
+# Calculate the relative path to the .pro file, relative base dir
 !isEmpty(profile):PRORELPATH = $$_PRO_FILE_PWD_
 PRORELPATH ~= s|^/||
 pwdparts = $$split(BASEDIR, '/')
 for(part, pwdparts):PRORELPATH = $$section(PRORELPATH, '/', 1)
 RELBASEDIR = $$replace(PRORELPATH, "[^/]+", "..")
 
+# Include local config
 isEmpty(LOCALCONFIG):LOCALCONFIG = localconfig.pri
 exists("$${BASEDIR}/$${LOCALCONFIG}"):include("$${BASEDIR}/$${LOCALCONFIG}")
-
-# Calculate the package name
-mainprofiles = $$files($$BASEDIR/*.pro)
-mainprofile = $$first(mainprofiles)
-mainprofile = $$basename(mainprofile)
-PACKAGE = $$section(mainprofile, '.', 0, 0)
 
 CONFIG += stl warn_on exceptions thread rtti silent
 CONFIG += debug
@@ -456,10 +474,9 @@ sources = $$files("$${_PRO_FILE_PWD_}/*.cpp") $$files("$${_PRO_FILE_PWD_}/*.c")
 HEADERS *= $$replace(headers, "(^| )$${_PRO_FILE_PWD_}/", "\\1")
 SOURCES *= $$replace(sources, "(^| )$${_PRO_FILE_PWD_}/", "\\1")
 # Help a bit with dependencies between internal libraries
-libdirs = $$files("$${BASEDIR}/*")
-for(libdir, libdirs):exists("$${libdir}/lib") {
-    INCLUDEPATH *= "$${libdir}/lib"
-    DEPENDPATH *= "$${libdir}/lib"
+for(libdir, CLEBS_TREES):exists("$${BASEDIR}/$${libdir}/lib") {
+    INCLUDEPATH *= "$${BASEDIR}/$${libdir}/lib"
+    DEPENDPATH *= "$${BASEDIR}/$${libdir}/lib"
 }
 
 # Install to the binary directory per default
@@ -502,8 +519,8 @@ exists("$${BASEDIR}/projectconfig.pri"):include("$${BASEDIR}/projectconfig.pri")
 
 # Fixup subdir compile order and dependencies. check dependencies  =============
 
-clebsFixupSubdirs()
-!isEmpty(CLEBS_EXTERNALDEPS) {
+!isEmpty(CLEBS_MAINPROFILE) {
+    clebsFixupSubdirs()
     CONFIG(release, debug|release) {
         message("----------------------------------------------")
         message("BUILDING IN RELEASE MODE")
