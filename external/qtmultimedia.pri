@@ -3,4 +3,5 @@ clebsCheck(qtmultimedia) {
 }
 
 clebsDependency(qtmultimedia) {
+    QT *= multimedia
 }
