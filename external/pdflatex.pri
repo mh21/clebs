@@ -31,6 +31,8 @@ clebsDependency(pdflatex) {
     BIBTEXCMD = BIBINPUTS=$$TEMPBUILDLATEX: openout_any=a bibtex
 
     pdflatex.input = PDFLATEX_SOURCES
+    unix:pdflatex.depend_command = ls *.tex
+    win32:pdflatex.depend_command = dir /b *.tex
     pdflatex.output = ${QMAKE_FILE_BASE}.pdf
     win32 {
         pdflatex.commands = ( if not exist $${TEMPBUILDLATEX} mkdir $$TEMPBUILDLATEX ) &
