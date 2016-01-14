@@ -336,7 +336,7 @@ defineTest(clebsPrintSubdir) {
 }
 
 defineTest(clebsAddTestTarget) {
-    unix:xvfb = "xvfb-run -a"
+    unix:xvfb = "xvfb-run -s \"-screen  0 1024x768x16\" -a"
     test.commands = @echo testing...;
     for(alldir, CLEBS_TREES) {
         shortalldir = $$basename(alldir)
