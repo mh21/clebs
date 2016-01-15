@@ -543,6 +543,8 @@ exists("$${BASEDIR}/projectconfig.pri"):include("$${BASEDIR}/projectconfig.pri")
 
 # Linking against libraries ====================================================
 
+win32:CLEBS *= $$win32_CLEBS
+unix:CLEBS *= $$unix_CLEBS
 alldeps = $$CLEBS $$CLEBS_INSTALL
 for(ever) {
     isEmpty(alldeps):break()
