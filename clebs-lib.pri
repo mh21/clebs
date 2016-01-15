@@ -47,6 +47,8 @@ defineTest(clebsFixupSubdirs) {
         pro = $$basename(subdir)
         !exists("$${fullsubdir}/$${pro}.pro"):next()
         deps = $$fromfile("$${fullsubdir}/$${pro}.pro", "CLEBS")
+        win32:deps *= $$fromfile("$${fullsubdir}/$${pro}.pro", "win32_CLEBS")
+        unix:deps *= $$fromfile("$${fullsubdir}/$${pro}.pro", "unix_CLEBS")
         libs = $$clebsInternalLibDependencies($$deps)
         external = $$clebsExternalDependencies($$deps)
         missing = $$clebsMissingDependencies($$external $$libs)
@@ -126,6 +128,8 @@ defineReplace(clebsMissingDependencies) {
             }
         } else:!isEmpty(lib) {
             alldeps *= $$fromfile("$${BASEDIR}/$${lib}/$${dep}.pro", "CLEBS")
+            win32:alldeps *= $$fromfile("$${BASEDIR}/$${lib}/$${dep}.pro", "win32_CLEBS")
+            unix:alldeps *= $$fromfile("$${BASEDIR}/$${lib}/$${dep}.pro", "unix_CLEBS")
         }
     }
 
