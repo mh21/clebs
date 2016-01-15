@@ -46,7 +46,7 @@ clebsDependency(pdflatex) {
     unix {
         pdflatex.commands = test -d $${TEMPBUILDLATEX} || mkdir -p $$TEMPBUILDLATEX ;
         pdflatex.commands += rm $${TEMPBUILDLATEX}* ;
-
+        pdflatex.commands += test -x pre-build.sh && ./pre-build.sh ;
         pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} ;
         pdflatex.commands += bibtex $${TEMPBUILDLATEX}${QMAKE_FILE_BASE}.aux ;
         pdflatex.commands += pdflatex $$LATEXOPTIONS ${QMAKE_FILE_NAME} ;
