@@ -1,2 +1,2 @@
-unix:QMAKE_CXXFLAGS *= -Werror
+unix:QMAKE_CXXFLAGS *= -Werror -Wno-error=deprecated-declarations
 # TODO win32
