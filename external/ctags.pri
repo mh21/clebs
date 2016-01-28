@@ -21,7 +21,7 @@ clebsDependency(ctags) {
         ctags.commands += echo !_TAG_FILE_SORTED 1 dummy >> $${outputfile};
         ctags.commands += sed -i \'s/ /\\t/g\' $${outputfile};
         ctags.commands += ctags -R --c++-kinds=+p-n --fields=+iaS --extra=+fq --exclude=.build --tag-relative=yes -f $${outputfile}.tmp ${QMAKE_FILE_IN};
-        ctags.commands += cat $${outputfile}.tmp | sed -r "'s/(dummy|$${namespaces}):://g;s/\\tnamespace:(dummy|$${namespaces})//g'" | LC_ALL=C sort >> $${outputfile};
+        ctags.commands += cat $${outputfile}.tmp | sed -r "'s/(dummy|$${namespaces}):://g;s/\\tnamespace:(dummy|$${namespaces})//g'" | LC_ALL=C.UTF-8 sort >> $${outputfile};
         ctags.commands += rm -f $${outputfile}.tmp
         ctags.CONFIG += combine no_link ignore_no_exist explicit_dependencies
         QMAKE_EXTRA_COMPILERS *= ctags
