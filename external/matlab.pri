@@ -16,7 +16,7 @@ clebsDependency(matlab) {
     unix {
         INCLUDEPATH *= $${MATLABROOT}/extern/include
 
-        exists( $${MATLABROOT}/bin/glnxa64/matlab ) {
+        exists( $${MATLABROOT}/bin/glnxa64/MATLAB ) {
 #           message("64bit")
             MATLABSUB=glnxa64
         }
