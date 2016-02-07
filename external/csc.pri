@@ -1,12 +1,12 @@
 clebsCheck(csc) {
     win32 {
         isEmpty(CSCOMPILER):CSCOMPILER = csc
-        system($$CSCOMPILER /help > NUL):CLEBS_DEPENDENCIES *= csc
+        system($$CSCOMPILER /help > NUL 2> NUL):CLEBS_DEPENDENCIES *= csc
     }
 
     unix {
         isEmpty(CSCOMPILER):CSCOMPILER = mcs
-        system($$CSCOMPILER /help > /dev/null):CLEBS_DEPENDENCIES *= csc
+        system($$CSCOMPILER /help > /dev/null 2>&1):CLEBS_DEPENDENCIES *= csc
     }
 }
 
