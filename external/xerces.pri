@@ -19,7 +19,7 @@ clebsCheck(xerces) {
     }
 
     unix {
-        exists (/usr/include/xercesc):CLEBS_DEPENDENCIES *= xerces
+        system(pkg-config xerces-c):CLEBS_DEPENDENCIES *= xerces
     }
 }
 
@@ -34,7 +34,7 @@ clebsDependency(xerces) {
     }
 
     unix {
-        LIBS *= -lxerces-c
+        PKGCONFIG *= xerces-c
     }
 }
 

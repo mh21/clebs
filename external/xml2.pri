@@ -14,7 +14,7 @@ clebsCheck(xml2) {
     }
 
     unix {
-        exists (/usr/include/libxml2):CLEBS_DEPENDENCIES *= xml2
+       system(pkg-config libxml-2.0):CLEBS_DEPENDENCIES *= xml2
     }
 }
 
@@ -28,8 +28,7 @@ clebsDependency(xml2) {
     }    
 
     unix {
-        INCLUDEPATH *= /usr/include/libxml2/
-        LIBS *= -lxml2
+        PKGCONFIG *= libxml-2.0
     }
 }
 
