@@ -20,3 +20,11 @@ clebsDependency(sndfile) {
         PKGCONFIG *= sndfile
     }
 }
+
+clebsInstall(sndfile) {
+    win32 {
+        sndfileinstall.files = $${SNDFILEROOT}/libsndfile-1.dll
+        sndfileinstall.path = $$BINDIR
+        INSTALLS *= sndfileinstall
+    }
+}
