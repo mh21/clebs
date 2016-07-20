@@ -2,19 +2,19 @@ clebsCheck(qwt) {
     win32 {
         isEmpty(QWTROOT):QWTROOT = $$BASEDIR/../api/qwt
         isEmpty(QWTLIB):QWTLIB = qwt
-        isEmpty(QWTLIB_RELEASE):QWTLIB_RELEASE = $${QWTLIB}5
-        isEmpty(QWTLIB_DEBUG):QWTLIB_DEBUG = $${QWTLIB}d5
+        isEmpty(QWTLIB_RELEASE):QWTLIB_RELEASE = $${QWTLIB}
+        isEmpty(QWTLIB_DEBUG):QWTLIB_DEBUG = $${QWTLIB}d
         isEmpty(QWTLIBDIR):QWTLIBDIR = $${QWTROOT}/lib
         isEmpty(QWTLIBDIR_RELEASE):QWTLIBDIR_RELEASE = $${QWTLIBDIR}
         isEmpty(QWTLIBDIR_DEBUG):QWTLIBDIR_DEBUG = $${QWTLIBDIR}
-        isEmpty(QWTINCLUDEDIR):QWTINCLUDEDIR = $${QWTROOT}/src
+        isEmpty(QWTINCLUDEDIR):QWTINCLUDEDIR = $${QWTROOT}/include
 
         exists($${QWTINCLUDEDIR}):CLEBS_DEPENDENCIES *= qwt
     }
 
     unix {
-        isEmpty(QWTLIB):QWTLIB = qwt-qt4
-        isEmpty(QWTINCLUDEDIR):QWTINCLUDEDIR = /usr/include/qwt-qt4
+        isEmpty(QWTLIB):QWTLIB = qwt-qt5
+        isEmpty(QWTINCLUDEDIR):QWTINCLUDEDIR = /usr/include/qwt
 
         exists($${QWTINCLUDEDIR}):CLEBS_DEPENDENCIES *= qwt
     }

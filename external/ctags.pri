@@ -27,9 +27,9 @@ clebsDependency(ctags) {
         QMAKE_EXTRA_COMPILERS *= ctags
         ALL_DEPS *= TAGS
 
-        outputfile = $${RELBASEDIR}/tags-qt4
-        ctags-qt4.commands = ctags -R --c++-kinds=+p-n --fields=+iaS --extra=+fq -f $${outputfile} /usr/include/qt4
-        ctags-qt4.target = CTAGS-QT4
-        QMAKE_EXTRA_TARGETS *= ctags-qt4
+        outputfile = $${RELBASEDIR}/tags-qt5
+        ctags-qt5.commands = ctags -R --c++-kinds=+p-n --fields=+iaS --extra=+fq -f $${outputfile} /usr/include/*/qt5 /usr/include/qwt
+        ctags-qt5.target = ctags-qt5
+        QMAKE_EXTRA_TARGETS *= ctags-qt5
     }
 }
