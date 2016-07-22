@@ -9,20 +9,17 @@ clebsCheck(zlib) {
     }
 
     unix {
-        isEmpty(ZLIBINCLUDEDIR):ZLIBINCLUDEDIR = /usr/include
-
-        exists($${ZLIBINCLUDEDIR}/zlib.h):CLEBS_DEPENDENCIES *= zlib
+        system(pkg-config zlib):CLEBS_DEPENDENCIES *= zlib
     }
 }
 
 clebsDependency(zlib) {
     win32 {
-        # Zlib(included with Qt, we only need the header)
+        LIBS *= -l$${ZLIBLIB}
         INCLUDEPATH *= $${ZLIBINCLUDEDIR}
     }
     unix {
-        LIBS *= -lz
-        INCLUDEPATH *= $${ZLIBINCLUDEDIR}
+        PKGCONFIG *= zlib
     }
 }
 
