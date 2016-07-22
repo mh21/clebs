@@ -1,9 +1,11 @@
 clebsCheck(zlib) {
     win32 {
         isEmpty(ZLIBROOT):ZLIBROOT = $$BASEDIR/../api/zlib
-        isEmpty(ZLIBINCLUDEDIR):ZLIBINCLUDEDIR = $${ZLIBROOT}
+        isEmpty(ZLIBINCLUDEDIR):ZLIBINCLUDEDIR = $${ZLIBROOT}/include
         isEmpty(ZLIBBINDIR):ZLIBBINDIR = $${ZLIBROOT}/bin
-        isEmpty(ZLIBLIB):ZLIBLIB = zlib1
+        isEmpty(ZLIBLIBDIR):ZLIBLIBDIR = $${ZLIBROOT}/lib
+        isEmpty(ZLIBDLL):ZLIBDLL = zlib1
+        isEmpty(ZLIBLIB):ZLIBLIB = zlib
 
         exists($${ZLIBINCLUDEDIR}):CLEBS_DEPENDENCIES *= zlib
     }
@@ -15,7 +17,7 @@ clebsCheck(zlib) {
 
 clebsDependency(zlib) {
     win32 {
-        LIBS *= -l$${ZLIBLIB}
+        LIBS *= -l$${ZLIBLIB} -L$${ZLIBLIBDIR}
         INCLUDEPATH *= $${ZLIBINCLUDEDIR}
     }
     unix {
@@ -25,7 +27,7 @@ clebsDependency(zlib) {
 
 clebsInstall(zlib) {
     win32 {
-        zlibinstall.files = $${ZLIBBINDIR}/$${ZLIBLIB}.dll
+        zlibinstall.files = $${ZLIBBINDIR}/$${ZLIBDLL}.dll
         zlibinstall.path = $$BINDIR
         INSTALLS *= zlibinstall
     }
