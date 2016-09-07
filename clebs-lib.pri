@@ -89,8 +89,7 @@ defineReplace(clebsDependencyFile) {
         return("")
     }
     # only error out if the error occured in the top-level pro file (not included)
-    profile = $$_PRO_FILE_ # do not remove, _PRO_FILE_ needs to be copied on QT4
-    !isEmpty(profile):error("Build configuration requested for unknown dependency $$1!")
+    !isEmpty(_PRO_FILE_):error("Build configuration requested for unknown dependency $$1!")
     # fail gracefully
     return("")
 }
@@ -379,11 +378,10 @@ defineTest(clebsAddTestTarget) {
 BASEDIR = $$dirname(PWD)
 
 # Current pro files
-profile = $$_PRO_FILE_ # do not remove, _PRO_FILE_ needs to be copied on QT4
 mainprofiles = $$files($$BASEDIR/*.pro)
 mainprofile = $$first(mainprofiles)
 mainprofile = $$basename(mainprofile)
-equals(profile, "$${BASEDIR}/$${mainprofile}"):CLEBS_MAINPROFILE = 1
+equals(_PRO_FILE_, "$${BASEDIR}/$${mainprofile}"):CLEBS_MAINPROFILE = 1
 
 # Calculate the package name
 PACKAGE = $$section(mainprofile, '.', 0, 0)
@@ -394,7 +392,7 @@ isEmpty(CLEBS_MAINPROFILE) {
 }
 
 # Calculate the relative path to the .pro file, relative base dir
-!isEmpty(profile):PRORELPATH = $$_PRO_FILE_PWD_
+!isEmpty(_PRO_FILE_):PRORELPATH = $$_PRO_FILE_PWD_
 PRORELPATH ~= s|^/||
 pwdparts = $$split(BASEDIR, '/')
 for(part, pwdparts):PRORELPATH = $$section(PRORELPATH, '/', 1)
